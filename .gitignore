@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # suprwod specifics #
 ####################
 war/WEB-INF/default.properties
@@ -87,4 +86,3 @@ local.properties
 # Eclipse project files
 .classpath
 .project
->>>>>>> 2ff3c31462fd3bf6244a4b915efc53b750de41f4
