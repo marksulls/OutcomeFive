@@ -1,6 +1,7 @@
 # suprwod specifics #
 ####################
 war/WEB-INF/default.properties
+war/WEB-INF/classes
 war/content/build
 suprwod.mwb.bak
 
@@ -85,4 +86,3 @@ local.properties
 
 # Eclipse project files
 .classpath
-.project
