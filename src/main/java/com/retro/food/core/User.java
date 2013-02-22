@@ -3,6 +3,7 @@ package com.retro.food.core;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -38,6 +39,7 @@ public class User extends Entity implements UserDetails, CredentialsContainer {
     private String email;
     @NotNull
     private String status;
+    private List<Cafe> cafesOwned;
     
     // spring security fields
     private String password;
@@ -144,6 +146,14 @@ public class User extends Entity implements UserDetails, CredentialsContainer {
     public String getUsername() {
         return email;
     }
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public boolean isEnabled() {
         return enabled;
@@ -167,5 +177,69 @@ public class User extends Entity implements UserDetails, CredentialsContainer {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public long getCafeId() {
+        return cafeId;
+    }
+
+    public void setCafeId(long cafeId) {
+        this.cafeId = cafeId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public List<Cafe> getCafesOwned() {
+        return cafesOwned;
+    }
+
+    public void setCafesOwned(List<Cafe> cafesOwned) {
+        this.cafesOwned = cafesOwned;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setAuthorities(Set<GrantedAuthority> authorities) {
+        this.authorities = authorities;
+    }
+
+    public void setAccountNonExpired(boolean accountNonExpired) {
+        this.accountNonExpired = accountNonExpired;
+    }
+
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
+    }
+
+    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+        this.credentialsNonExpired = credentialsNonExpired;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

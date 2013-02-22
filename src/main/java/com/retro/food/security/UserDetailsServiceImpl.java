@@ -1,7 +1,8 @@
 package com.retro.food.security;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         _log.debug("got user [{}] , password [{}]",user.getEmail(),user.getPassword());
         // build the permissions array
-        ArrayList<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
         // cool, looks for cafe ownerships
         List<Cafe> cafes = getCafeDao().findOwnedCafesByUserId(user.getId());
         _log.debug("cafes owned are [{}]",cafes);
@@ -51,30 +52,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if(cafes != null && cafes.size() > 0) {
             // this person is an owner
             authorities.add(new SimpleGrantedAuthority("ROLE_OWNER"));
-        } else {
-            // not an owner
-            authorities.add(new SimpleGrantedAuthority("ROLE_ATHLETE"));
         }
-        // hardcode ryan, mark, bob as super users
-        if(username.equalsIgnoreCase("mark@suprwod.com")) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_SUPER"));
-            user.setSuper(true);
-        }
-        if(username.equalsIgnoreCase("bob@suprwod.com")) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_SUPER"));
-            user.setSuper(true);
-        }
-        if(username.equalsIgnoreCase("ryan@suprwod.com")) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_SUPER"));
-            user.setSuper(true);
-        }
-        if(username.equalsIgnoreCase("vanpoollen@gmail.com")) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_SUPER"));
-            user.setSuper(true);
-        }
+        // hardcode super users
+//        if(username.equalsIgnoreCase("mark@suprwod.com")) {
+//            authorities.add(new SimpleGrantedAuthority("ROLE_SUPER"));
+//        }
         // set the authorities
         user.setAuthorities(authorities);
-        // set the gyms owned
+        // set the cafes owned
         user.setCafesOwned(cafes);
         // create the user details object
         return user;

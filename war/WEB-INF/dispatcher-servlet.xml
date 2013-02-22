@@ -215,9 +215,9 @@
     <bean class="com.retro.food.web.interceptor.UserInterceptor" scope="request">
       <property name="userDao" ref="userDao" />
     </bean>
-    <bean class="com.retro.wod.web.interceptor.DevEnvironmentInterceptor" />
+    <bean class="com.retro.food.web.interceptor.DevEnvironmentInterceptor" />
   </mvc:interceptors>
   
   <!-- normal web views -->
-  <bean id="clazzController" class="com.retro.wod.web.ClassController" parent="allDaoConfigBean" lazy-init="true" />
+  <bean class="com.retro.food.web.ClassController" parent="allDaoConfigBean" lazy-init="true" />
 </beans>
