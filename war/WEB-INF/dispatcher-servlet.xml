@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:security="http://www.springframework.org/schema/security"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xsi:schemaLocation="
+    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+  <!-- ***** data access ***** -->
+  <!-- the first two entries are for local tomcat, unit tests, and then production -->
+  <context:property-placeholder location="war/WEB-INF/default.properties,WEB-INF/default.properties,file:/etc/fooddude/fooddude.conf" ignore-resource-not-found="true" />
+  
+  <!-- datasource -->
+  <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">
+    <property name="driverClassName" value="${jdbc.driverClassName}" />
+    <property name="url" value="${jdbc.url}" />
+    <property name="username" value="${jdbc.username}" />
+    <property name="password" value="${jdbc.password}" /> 
+    <property name="validationQuery" value="select * from cafe limit 1" />
+    <property name="validationInterval" value="30000" />
+    <property name="logValidationErrors" value="true" />
+    <property name="testOnBorrow" value="true" />
+    <property name="testWhileIdle" value="true" />
+    <property name="removeAbandoned" value="true" />
+    <property name="logAbandoned" value="true" />
+  </bean>
+  
+  <!-- transaction manager -->
+  <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSource" />
+  </bean>
+  <!-- memcache support -->
+  <bean name="memcachedClientBuilder" class="net.rubyeye.xmemcached.XMemcachedClientBuilder">
+    <!-- XMemcachedClientBuilder have two arguments.First is server list,and 
+      second is weights array. -->
+    <constructor-arg>
+      <list>
+        <bean class="java.net.InetSocketAddress">
+          <constructor-arg>
+            <value>localhost</value>
+          </constructor-arg>
+          <constructor-arg>
+            <value>11211</value>
+          </constructor-arg>
+        </bean>
+        <!-- <bean class="java.net.InetSocketAddress">
+          <constructor-arg>
+            <value>localhost</value>
+          </constructor-arg>
+          <constructor-arg>
+            <value>12001</value>
+          </constructor-arg>
+        </bean> -->
+      </list>
+    </constructor-arg>
+    <constructor-arg>
+      <list>
+        <value>1</value>
+        <!-- <value>2</value> -->
+      </list>
+    </constructor-arg>
+    <property name="connectionPoolSize" value="1"></property>
+    <property name="commandFactory">
+      <bean class="net.rubyeye.xmemcached.command.BinaryCommandFactory"></bean>
+    </property>
+    <property name="sessionLocator">
+      <bean class="net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator"></bean>
+    </property>
+    <property name="transcoder">
+      <bean class="net.rubyeye.xmemcached.transcoders.SerializingTranscoder" />
+    </property>
+  </bean>
+  <!-- Use factory bean to build memcached client -->
+  <bean name="cacheFactory" factory-bean="memcachedClientBuilder" factory-method="build" destroy-method="shutdown"/>
+
+  <bean id="userDao" class="com.retro.food.data.dao.UserDao" lazy-init="true">
+    <property name="tableName" value="user" />
+    <property name="dataSource" ref="dataSource" />
+    <property name="transactionManager" ref="transactionManager" />
+    <property name="cache" ref="cacheFactory" />
+  </bean>
+  
+  <bean id="cafeDao" class="com.retro.food.data.dao.CafeDao" lazy-init="true">
+    <property name="tableName" value="cafe" />
+    <property name="dataSource" ref="dataSource" />
+    <property name="transactionManager" ref="transactionManager" />
+    <property name="cache" ref="cacheFactory" />
+  </bean>
+  
+  <bean id="allDaoConfigBean" abstract="true">
+    <property name="cafeDao" ref="cafeDao" />
+    <property name="userDao" ref="userDao" />
+  </bean>
+  
+  <!--  this is a workaround for some configuration difficulties -->
+  <bean id="daoFactorySingleton" class="com.retro.food.data.dao.DaoFactory" parent="allDaoConfigBean" factory-method="getInstance"/>
+  <mvc:annotation-driven conversion-service="conversionService"/>
+
+  <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+      <property name="formatters">
+          <set>
+              <bean class="com.retro.core.format.SqlTimeFormatterFactory"/>
+              <bean class="com.retro.core.format.SqlDateFormatterFactory"/>
+              <bean class="com.retro.core.format.DurationFormatterFactory"/>
+          </set>
+      </property>
+  </bean>
+  
+  <!-- user details service -->
+  <bean id="userDetailsServiceImpl" class="com.retro.food.security.UserDetailsServiceImpl">
+    <property name="cafeDao" ref="cafeDao" />
+    <property name="userDao" ref="userDao" />
+  </bean>
+  
+  <security:global-method-security pre-post-annotations="enabled" />
+
+  <security:http pattern="/channel.html" security="none" />
+  <security:http pattern="/favicon.ico" security="none" />
+  <!-- by pass static content -->
+  <security:http pattern="/robots.txt" security="none" />
+  <security:http pattern="/sitemap.xml" security="none" />
+  <security:http pattern="/content/**" security="none" />
+  <security:http pattern="/css/**" security="none" />
+  <security:http pattern="/js/**" security="none" />
+  <security:http pattern="/img/**" security="none" />
+  <security:http pattern="/login" security="none" />
+  <security:http pattern="/login/failure" security="none" />
+  <security:http pattern="/api/**" security="none" />
+  
+  <bean id="anonymousAuthFilter" class="org.springframework.security.web.authentication.AnonymousAuthenticationFilter">
+    <property name="key" value="foobar"/>
+    <property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS"/>
+  </bean>
+
+  <bean id="anonymousAuthenticationProvider" class="org.springframework.security.authentication.AnonymousAuthenticationProvider">
+    <property name="key" value="foobar"/>
+  </bean>
+
+  <!--  lockdown everything else -->
+  <security:http use-expressions="true">
+    <!--  anonymous access pages -->
+    <security:intercept-url pattern="/" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/signup" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/signin/*" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/register" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/register/*" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/connect/*" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/wod/*" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/movements" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/movement/*/view" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/competitions" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/competition/*/view" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/competition/*/scoreboard" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/wod/create" access="hasAnyRole('ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/wod/save" access="hasAnyRole('ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/**" access="hasAnyRole('ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:form-login login-processing-url="/j_spring_security_check" login-page="/login" authentication-failure-url="/login/failure" default-target-url="/"/>
+    <security:logout />
+    <security:remember-me key="rcwkdata" />
+  </security:http>
+  
+  <mvc:resources mapping="/channel.html" location="/channel.html" />
+  <mvc:resources mapping="/content/**" location="/content/" />
+  <mvc:resources mapping="/css/**" location="/content/unicorn/css/" />
+  <mvc:resources mapping="/img/**" location="/content/unicorn/img/" />
+  <mvc:resources mapping="/js/**" location="/content/unicorn/js/" />
+  <mvc:resources mapping="/favicon.ico" location="/content/i/favicon.ico" />
+  
+  <!-- our salt for the password encryption -->
+  <bean id="saltSource" class="org.springframework.security.authentication.dao.SystemWideSaltSource">
+    <!-- never change this -->
+    <property name="systemWideSalt" value="nasdrq90341234qkalsdfs" />
+  </bean>
+  
+  <security:authentication-manager alias="authenticationManager">
+      <security:authentication-provider user-service-ref="userDetailsServiceImpl">
+        <security:password-encoder hash="sha-256">
+          <security:salt-source ref="saltSource"/>
+        </security:password-encoder>
+      </security:authentication-provider>
+  </security:authentication-manager>
+  
+  <!--  ************* WEB ******************* -->
+ <!-- json -->
+ <bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+    <property name="supportedMediaTypes" value="application/json" />
+    <!-- <property name="objectMapper" ref="powerObjectMapper" /> -->
+  </bean>
+  
+  <!-- annotation json/xml serialization -->
+  <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+    <property name="ignoreDefaultModelOnRedirect" value="true" />
+    <property name="messageConverters">
+      <list>
+        <ref bean="jsonConverter" />
+      </list>
+    </property>
+  </bean>
+
+  <!-- Our view resolution. Simply takes the view name and creates /{NAME}.jsp -->
+  <bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+    <property name="prefix" value="/WEB-INF/jsp/" />
+    <property name="suffix" value=".jsp" />
+  </bean>
+  
+  <!-- Configures Handler Interceptors -->
+  <mvc:interceptors>
+    <bean class="com.retro.food.web.interceptor.UserInterceptor" scope="request">
+      <property name="userDao" ref="userDao" />
+    </bean>
+    <bean class="com.retro.wod.web.interceptor.DevEnvironmentInterceptor" />
+  </mvc:interceptors>
+  
+  <!-- normal web views -->
+  <bean id="clazzController" class="com.retro.wod.web.ClassController" parent="allDaoConfigBean" lazy-init="true" />
+</beans>
