@@ -2,7 +2,7 @@
 ####################
 war/WEB-INF/default.properties
 war/WEB-INF/classes
-war/content/build
+war/assets/build
 *.mwb.bak
 node_modules
 
