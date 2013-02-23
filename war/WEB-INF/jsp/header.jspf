@@ -1,0 +1,158 @@
+<%@ page pageEncoding="UTF-8" isELIgnored="false"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%-- this version number needs to stay in sync with the version file in the root of the project --%>
+<c:set var="VERSION" value="79" />
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%-- THING · WHO · Menu Cost App --%>
+    <title>${not empty title_title ? title_title : "Menu Cost Calculator"} ${not empty _user ? "· ".concat(_user.name) : "· Menu Cost Calculator"}</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="author" content="RetroCognition LLC">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <c:choose>
+      <c:when test="${_dev}">
+        <link rel="stylesheet" href="/assets/css/bootstrap.css" />
+        <link rel="stylesheet" href="/assets/css/bootstrap-responsive.css" />
+        <link rel="stylesheet" href="/assets/css/jquery-ui.css" />
+        <link rel="stylesheet" href="/assets/css/cafe.css" />
+      </c:when>
+      <c:otherwise>
+        <link rel="stylesheet" href="http://s.suprcache.com/assets/cafe.min.${VERSION}.gz.css" /> 
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://cdn.suprcache.com/i/apple-touch-icon-144-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://cdn.suprcache.com/i/apple-touch-icon-114-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://cdn.suprcache.com/i/apple-touch-icon-72-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" href="http://cdn.suprcache.com/i/apple-touch-icon-57-precomposed.png">
+        <link rel="shortcut icon" href="http://s.suprcache.com/assets/i/favicon.png">
+      </c:otherwise>
+    </c:choose>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Menu Cost Calculator</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+             <!--  <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li> -->
+              <!-- <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">Action</a></li>
+                  <li><a href="#">Another action</a></li>
+                  <li><a href="#">Something else here</a></li>
+                  <li class="divider"></li>
+                  <li class="nav-header">Nav header</li>
+                  <li><a href="#">Separated link</a></li>
+                  <li><a href="#">One more separated link</a></li>
+                </ul>
+              </li> -->
+            </ul>
+            <c:choose>
+              <c:when test="${empty _user && hide_nav != 'true'}">
+                <form class="navbar-form pull-right" action="/j_spring_security_check" method="post">
+                  <input name="j_username" class="span2" type="text" placeholder="Email">
+                  <input name="j_password" class="span2" type="password" placeholder="Password">
+                  <button type="submit" class="btn">Sign in</button>
+                </form>
+              </c:when>
+              <c:when test="${not empty _user}">
+                <ul class="nav pull-right">
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon icon-user"></i> <span class="text">${_user.username} </span> <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="/profile/edit"><i class="icon-user"></i> Profile</a></li>
+                    <li class="divider"></li>
+                    <li><a href="/results/create"><i class="icon-plus"></i> Record Score</a></li>
+                    <li><a data-toggle="modal" href="/profile/password" data-target="#passwordModal"><i class="icon-edit"></i> Change Password</a></li>
+                    <li><a data-toggle="modal" href="/weighin/create" data-target="#weighInModal"><i class="icon-edit"></i> Weigh-In</a></li>
+                  <security:authorize ifAnyGranted="ROLE_SUPER">
+                      <li class="divider"></li>
+                      <li><a href="/gym/create">Create Gym</a></li>
+                  </security:authorize>
+                    <li class="divider"></li>
+                    <c:forEach var="cafeOwned" items="${_user.cafesOwned}">
+                      <li class="dropdown-submenu pull-left">
+                        <a tabindex="-1" href="#">${cafeOwned.name}</a>
+                        <ul class="dropdown-menu">
+                          <li><a href="/gym/${cafeOwned.id}/competitions">Competitions</a></li>
+                          <li class="dropdown-submenu">
+                            <a tabindex="-1" href="#">Athletes</a>
+                            <ul class="dropdown-menu">
+                              <li><a href="/gym/${cafeOwned.id}/athletes">View Athletes</a></li>
+                              <li><a href="/athlete/create">Create Athlete</a></li>
+                            </ul>
+                          </li>
+                          <li class="dropdown-submenu">
+                            <a tabindex="-1" href="#">Classes</a>
+                            <ul class="dropdown-menu">
+                              <li><a href="/gym/${cafeOwned.id}/classes">View Classes</a></li>
+                              <li><a href="/class/create">Create Class</a></li>
+                            </ul>
+                          </li>
+                          <li class="dropdown-submenu">
+                            <a tabindex="-1" href="#">Movements</a>
+                            <ul class="dropdown-menu">
+                              <li><a href="/movements">View Movements</a></li>
+                              <security:authorize ifAnyGranted="ROLE_SUPER">
+                                <li><a href="/movement/create">Create Movement</a></li>
+                              </security:authorize>
+                            </ul>
+                          </li>
+                          <li class="dropdown-submenu">
+                            <a tabindex="-1" href="#">Workouts</a>
+                            <ul class="dropdown-menu">
+                              <li><a href="/workouts">View Workouts</a></li>
+                              <li><a href="/workout/create">Create Workout</a></li>
+                            </ul>
+                          </li>
+                        </ul>
+                        <li class="divider"></li>
+                      </li>
+                    </c:forEach>
+                    <li><a href="/j_spring_security_logout"><i class="icon icon-share-alt"></i> Sign Out</a></li>
+                  </ul>
+              </c:when>
+            </c:choose>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <%-- error messaging --%>
+      <c:if test="${not empty _errors}">
+        <c:forEach var="message" items="${_errors}">
+          <div class="alert alert-error">
+            <button class="close" data-dismiss="alert">&times;</button>
+            <strong>Error!</strong> ${message}
+          </div>
+        </c:forEach>
+      </c:if>
+      <c:if test="${not empty _warnings}">
+        <c:forEach var="message" items="${_warnings}">
+          <div class="alert">
+            <button class="close" data-dismiss="alert">&times;</button>
+            <strong>Warning!</strong> ${message}
+          </div>
+        </c:forEach>
+      </c:if>
+      <c:if test="${not empty _messages}">
+        <c:forEach var="message" items="${_messages}">
+          <div class="alert alert-success">
+            <button class="close" data-dismiss="alert">&times;</button>
+            <strong>Ok!</strong> ${message}
+          </div>
+        </c:forEach>
+      </c:if>

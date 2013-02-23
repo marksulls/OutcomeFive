@@ -15,9 +15,9 @@ import org.springframework.jdbc.core.RowMapper;
 import com.retro.core.data.dao.BaseDao;
 import com.retro.food.core.Cafe;
 
-public class CafeDao extends BaseDao<Cafe> {
+public class MenuItemDao extends BaseDao<Cafe> {
     // logging
-    final Logger _log = LoggerFactory.getLogger(CafeDao.class);
+    final Logger _log = LoggerFactory.getLogger(MenuItemDao.class);
     /**
      * Returns the cafes owned by the given athlete
      * 

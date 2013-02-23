@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -32,9 +33,11 @@ public class UserDao extends BaseDao<User> {
                     "select * from user where email = ?",
                     new Object[] {email}, getRowMapper());
         } catch (EmptyResultDataAccessException e) {
-            _log.debug("no athletes found for email [{}]", email);
-            return null;
+            _log.debug("no user found for email [{}]", email);
+        } catch (DataAccessException e) {
+            _log.error("error looking up user with email [{}] - [{}]",email,e);
         }
+        return null;
     }
     /**
      * maps the ResultSet to an object
@@ -46,6 +49,9 @@ public class UserDao extends BaseDao<User> {
                 // map result set to object
                 User user = new User();
                 user.setId(rs.getLong("user_id"));
+                user.setName(rs.getString("name"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
                 user.setCreated(rs.getTimestamp("created"));
                 user.setUpdated(rs.getTimestamp("updated"));
                 // return the object
@@ -60,10 +66,17 @@ public class UserDao extends BaseDao<User> {
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(
-                                "insert into user (user_id,name,created,updated) values (?,?,now(),now()) "
-                                + "on duplicate key update name = values(name),updated = now()", 
-                                new String[] { "user_id" });
-                ps.setLong(1, user.getId());
+                    "insert into user (user_id,name,email,password,created,updated) values (?,?,?,?,now(),now()) " +
+                    "on duplicate key update " +
+                    "name = values(name)," +
+                    "password = values(password)," +
+                    "email = values(email)," +
+                    "updated = now()", 
+                    new String[] { "user_id" });
+                ps.setLong(1,user.getId());
+                ps.setString(2,user.getName());
+                ps.setString(3,user.getEmail());
+                ps.setString(4,user.getPassword());
                 return ps;
             }
         };

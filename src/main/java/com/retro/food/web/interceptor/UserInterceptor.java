@@ -2,7 +2,6 @@ package com.retro.food.web.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +31,9 @@ public class UserInterceptor implements HandlerInterceptor {
             // setting gym, continue
             return true;
         }
-        // check if spring has been configured yet
-        HttpSession session = request.getSession();
         // no one authenticated yet
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            _log.info("no auth");
+            _log.debug("no auth");
             // spring security not configured, continue request
             return true;
         }
@@ -45,25 +42,9 @@ public class UserInterceptor implements HandlerInterceptor {
         User user = getUserFromPrincipal(principal);
         // this will be null if the user is anonymous
         if(user == null) {
-            _log.info("no principal");
+            _log.debug("no principal");
             return true;
         }
-//        // check if there is a current gym set
-//        if (session.getAttribute("currentGymId") == null) {
-//            // if the user has a default gym
-//            if(athlete.getGymId() != 0) {
-//                _log.debug("the athlete [{}] has only one gym",athlete);
-//                session.setAttribute("currentGymId",athlete.getGymId());
-//                return true;
-//            } else if(athlete.getGymsOwned() != null && athlete.getGymsOwned().size() == 1) {
-//                _log.debug("the athlete [{}] has only one gym",athlete);
-//                session.setAttribute("currentGymId",athlete.getGymsOwned().get(0).getId());
-//                return true;
-//            } 
-//            // else gym owner, send to selection
-//            response.sendRedirect("/gym/switch");
-//            return false;
-//        } 
         // else nothing to do
         return true;
     }
@@ -125,6 +106,16 @@ public class UserInterceptor implements HandlerInterceptor {
         }
         _log.info("context holder is [{}]",user);
         return user;
+    }
+    
+    /**
+     * Retrieves the current athlete from the principal object
+     * @param principal
+     * @return
+     */
+    public static User getUserFromPrincipal() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return getUserFromPrincipal(principal);
     }
 
     public CafeDao getCafeDao() {

@@ -42,7 +42,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             _log.error("no user with email [{}]",username);
             throw new UsernameNotFoundException("no user found for username " + username);
         }
-        _log.debug("got user [{}] , password [{}]",user.getEmail(),user.getPassword());
+        _log.info("got user [{}] , password [{}]",user.getEmail(),user.getPassword());
         // build the permissions array
         Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
         // cool, looks for cafe ownerships
@@ -54,9 +54,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority("ROLE_OWNER"));
         }
         // hardcode super users
-//        if(username.equalsIgnoreCase("mark@suprwod.com")) {
-//            authorities.add(new SimpleGrantedAuthority("ROLE_SUPER"));
-//        }
+        if(username.equalsIgnoreCase("marksulls@gmail.com")) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_SUPER"));
+        }
         // set the authorities
         user.setAuthorities(authorities);
         // set the cafes owned

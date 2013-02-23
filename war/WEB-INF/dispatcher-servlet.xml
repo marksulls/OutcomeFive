@@ -79,15 +79,44 @@
   <!-- Use factory bean to build memcached client -->
   <bean name="cacheFactory" factory-bean="memcachedClientBuilder" factory-method="build" destroy-method="shutdown"/>
 
+  <bean id="cafeDao" class="com.retro.food.data.dao.CafeDao" lazy-init="true">
+    <property name="tableName" value="cafe" />
+    <property name="dataSource" ref="dataSource" />
+    <property name="transactionManager" ref="transactionManager" />
+    <property name="cache" ref="cacheFactory" />
+  </bean>
+  <bean id="cafeUserDao" class="com.retro.food.data.dao.CafeUserDao" lazy-init="true">
+    <property name="tableName" value="cafe_user" />
+    <property name="dataSource" ref="dataSource" />
+    <property name="transactionManager" ref="transactionManager" />
+    <property name="cache" ref="cacheFactory" />
+  </bean>
+  <bean id="cafeVendorDao" class="com.retro.food.data.dao.CafeVendorDao" lazy-init="true">
+    <property name="tableName" value="cafe_vendor" />
+    <property name="dataSource" ref="dataSource" />
+    <property name="transactionManager" ref="transactionManager" />
+    <property name="cache" ref="cacheFactory" />
+  </bean>
+  <bean id="menuDao" class="com.retro.food.data.dao.MenuDao" lazy-init="true">
+    <property name="tableName" value="menu" />
+    <property name="dataSource" ref="dataSource" />
+    <property name="transactionManager" ref="transactionManager" />
+    <property name="cache" ref="cacheFactory" />
+  </bean>
+  <bean id="menuItemDao" class="com.retro.food.data.dao.MenuItemDao" lazy-init="true">
+    <property name="tableName" value="menu_item" />
+    <property name="dataSource" ref="dataSource" />
+    <property name="transactionManager" ref="transactionManager" />
+    <property name="cache" ref="cacheFactory" />
+  </bean>
   <bean id="userDao" class="com.retro.food.data.dao.UserDao" lazy-init="true">
     <property name="tableName" value="user" />
     <property name="dataSource" ref="dataSource" />
     <property name="transactionManager" ref="transactionManager" />
     <property name="cache" ref="cacheFactory" />
   </bean>
-  
-  <bean id="cafeDao" class="com.retro.food.data.dao.CafeDao" lazy-init="true">
-    <property name="tableName" value="cafe" />
+  <bean id="vendorDao" class="com.retro.food.data.dao.VendorDao" lazy-init="true">
+    <property name="tableName" value="vendor" />
     <property name="dataSource" ref="dataSource" />
     <property name="transactionManager" ref="transactionManager" />
     <property name="cache" ref="cacheFactory" />
@@ -95,7 +124,12 @@
   
   <bean id="allDaoConfigBean" abstract="true">
     <property name="cafeDao" ref="cafeDao" />
+    <property name="cafeUserDao" ref="cafeUserDao" />
+    <property name="cafeVendorDao" ref="cafeVendorDao" />
+    <property name="menuDao" ref="menuDao" />
+    <property name="menuItemDao" ref="menuItemDao" />
     <property name="userDao" ref="userDao" />
+    <property name="vendorDao" ref="vendorDao" />
   </bean>
   
   <!--  this is a workaround for some configuration difficulties -->
@@ -122,16 +156,12 @@
 
   <security:http pattern="/channel.html" security="none" />
   <security:http pattern="/favicon.ico" security="none" />
-  <!-- by pass static content -->
+  <!-- by pass static assets -->
   <security:http pattern="/robots.txt" security="none" />
   <security:http pattern="/sitemap.xml" security="none" />
-  <security:http pattern="/content/**" security="none" />
-  <security:http pattern="/css/**" security="none" />
-  <security:http pattern="/js/**" security="none" />
-  <security:http pattern="/img/**" security="none" />
+  <security:http pattern="/assets/**" security="none" />
   <security:http pattern="/login" security="none" />
   <security:http pattern="/login/failure" security="none" />
-  <security:http pattern="/api/**" security="none" />
   
   <bean id="anonymousAuthFilter" class="org.springframework.security.web.authentication.AnonymousAuthenticationFilter">
     <property name="key" value="foobar"/>
@@ -145,32 +175,17 @@
   <!--  lockdown everything else -->
   <security:http use-expressions="true">
     <!--  anonymous access pages -->
-    <security:intercept-url pattern="/" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
-    <security:intercept-url pattern="/signup" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
-    <security:intercept-url pattern="/signin/*" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
-    <security:intercept-url pattern="/register" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
-    <security:intercept-url pattern="/register/*" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
-    <security:intercept-url pattern="/connect/*" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
-    <security:intercept-url pattern="/wod/*" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
-    <security:intercept-url pattern="/movements" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
-    <security:intercept-url pattern="/movement/*/view" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
-    <security:intercept-url pattern="/competitions" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
-    <security:intercept-url pattern="/competition/*/view" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
-    <security:intercept-url pattern="/competition/*/scoreboard" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
-    <security:intercept-url pattern="/wod/create" access="hasAnyRole('ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
-    <security:intercept-url pattern="/wod/save" access="hasAnyRole('ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
-    <security:intercept-url pattern="/**" access="hasAnyRole('ROLE_SUPER','ROLE_OWNER','ROLE_ATHLETE')" />
+    <security:intercept-url pattern="/" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_EMPLOYEE')" />
+    <security:intercept-url pattern="/register" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_EMPLOYEE')" />
+    <security:intercept-url pattern="/register/*" access="hasAnyRole('ROLE_ANONYMOUS','ROLE_SUPER','ROLE_OWNER','ROLE_EMPLOYEE')" />
+    <security:intercept-url pattern="/**" access="hasAnyRole('ROLE_SUPER','ROLE_OWNER','ROLE_EMPLOYEE')" />
     <security:form-login login-processing-url="/j_spring_security_check" login-page="/login" authentication-failure-url="/login/failure" default-target-url="/"/>
     <security:logout />
     <security:remember-me key="rcwkdata" />
   </security:http>
   
-  <mvc:resources mapping="/channel.html" location="/channel.html" />
-  <mvc:resources mapping="/content/**" location="/content/" />
-  <mvc:resources mapping="/css/**" location="/content/unicorn/css/" />
-  <mvc:resources mapping="/img/**" location="/content/unicorn/img/" />
-  <mvc:resources mapping="/js/**" location="/content/unicorn/js/" />
-  <mvc:resources mapping="/favicon.ico" location="/content/i/favicon.ico" />
+  <mvc:resources mapping="/assets/**" location="/assets/" />
+  <mvc:resources mapping="/favicon.ico" location="/assets/i/favicon.ico" />
   
   <!-- our salt for the password encryption -->
   <bean id="saltSource" class="org.springframework.security.authentication.dao.SystemWideSaltSource">
@@ -219,5 +234,11 @@
   </mvc:interceptors>
   
   <!-- normal web views -->
-  <bean class="com.retro.food.web.ClassController" parent="allDaoConfigBean" lazy-init="true" />
+  <bean class="com.retro.food.web.CafeController" parent="allDaoConfigBean" lazy-init="true" />
+  <bean class="com.retro.food.web.IndexController" parent="allDaoConfigBean" lazy-init="true" />
+  <bean class="com.retro.food.web.LoginController" parent="allDaoConfigBean" lazy-init="true" />
+  <bean class="com.retro.food.web.MenuController" parent="allDaoConfigBean" lazy-init="true" />
+  <bean class="com.retro.food.web.ProfileController" parent="allDaoConfigBean" lazy-init="true" />
+  <bean class="com.retro.food.web.RegistrationController" parent="allDaoConfigBean" lazy-init="true" />
+  <bean class="com.retro.food.web.VendorController" parent="allDaoConfigBean" lazy-init="true" />
 </beans>

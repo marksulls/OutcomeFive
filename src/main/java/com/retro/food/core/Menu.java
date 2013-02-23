@@ -2,43 +2,29 @@ package com.retro.food.core;
 
 import javax.validation.constraints.NotNull;
 
-import com.ibm.icu.util.TimeZone;
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.retro.core.data.Entity;
-import com.retro.core.util.DateUtil;
 
 /**
- * represents a cafe
+ * represents a menu
  * 
  * @author <a href="mailto:mark@retrocognition.us">Mark Sullivan<a/>
  **/
 public class Menu extends Entity {
     // serializable
-    private static final long serialVersionUID = 6458323562874908412L;
-    @NotNull
-    private String name;
-    @NotNull
-    private String timeZone;
-    
-    // helper
-    public String getTimeZoneOffset() {
-        TimeZone tz = TimeZone.getTimeZone(getTimeZone());
-        // sanity check
-        if(tz != null) {
-            // get the offset
-            return DateUtil.getOffsetString(tz);
-        } 
-        // else
-        return "Bad Timezone";
-    }
+    private static final long serialVersionUID = 4646245132404865570L;
 
-    public String getTimeZone() {
-        return timeZone;
-    }
+    private Long cafeId;
+    @NotNull @NotBlank
+    private String name;
     
-    public void setTimeZone(String timeZone) {
-        this.timeZone = timeZone;
+    public Long getCafeId() {
+        return cafeId;
     }
-    
+    public void setCafeId(Long cafeId) {
+        this.cafeId = cafeId;
+    }
     public String getName() {
         return name;
     }

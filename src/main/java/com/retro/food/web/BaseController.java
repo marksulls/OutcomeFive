@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,6 +24,7 @@ import com.retro.core.data.ObjectNotFoundException;
 import com.retro.food.core.Cafe;
 import com.retro.food.core.User;
 import com.retro.food.data.dao.DaoKeeper;
+import com.retro.food.web.interceptor.UserInterceptor;
 
 /**
  * base location for controllers
@@ -64,15 +64,12 @@ public abstract class BaseController extends DaoKeeper {
     }
     
     /**
-     * Retrieves the current athlete from the principal object
+     * Retrieves the current user from the principal object
      * @return
      */
     public User getCurrentUser() {
-        // get the security principal (should be an athlete)
-        // TODO: sanity check this
-        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        _log.debug("contexts holder is [{}]",user);
-        return user;
+        // get the security principal
+        return UserInterceptor.getUserFromPrincipal();
     }
     
     @ExceptionHandler(ObjectNotFoundException.class)
