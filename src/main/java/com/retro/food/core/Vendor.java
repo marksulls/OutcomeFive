@@ -2,6 +2,8 @@ package com.retro.food.core;
 
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.retro.core.data.Entity;
 
 /**
@@ -12,7 +14,7 @@ import com.retro.core.data.Entity;
 public class Vendor extends Entity {
     // serializable
     private static final long serialVersionUID = -4871084067736798667L;
-    @NotNull
+    @NotNull @NotBlank
     private String name;
     private String street1;
     private String street2;

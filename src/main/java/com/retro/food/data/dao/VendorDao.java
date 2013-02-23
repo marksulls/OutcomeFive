@@ -24,8 +24,8 @@ public class VendorDao extends BaseDao<Vendor> {
      * @param athleteId the id of the athlete
      * @return the object, or null if the id is invalid
      */
-    public List<Vendor> findOwnedVendorsForCafe(Long cafeId) {
-        _log.debug("looking up vendors owned by cafe [{}]",cafeId);
+    public List<Vendor> findVendorsForCafe(Long cafeId) {
+        _log.debug("looking up vendors by cafe [{}]",cafeId);
         
         try {
             // look up the gyms
@@ -74,7 +74,7 @@ public class VendorDao extends BaseDao<Vendor> {
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(
-                    "insert into vendor (vendor_id,name,street1,street2,street3,city,state,zip,country,phone,created,updated) values (?,?,?,?,?,?,?,now(),now()) " +
+                    "insert into vendor (vendor_id,name,street1,street2,street3,city,state,zip,phone,created,updated) values (?,?,?,?,?,?,?,?,?,now(),now()) " +
                     "on duplicate key update " +
                     "name = values(name)," +
                     "street1 = values(street1), " +
@@ -83,7 +83,6 @@ public class VendorDao extends BaseDao<Vendor> {
                     "city = values(city), " +
                     "state = values(state), " +
                     "zip = values(zip), " +
-                    "country = values(country)," +
                     "phone = values(phone)," +
                     "updated = now()", 
                     new String[] { "vendor_id" });
@@ -95,8 +94,7 @@ public class VendorDao extends BaseDao<Vendor> {
                 ps.setString(6, object.getCity());
                 ps.setString(7, object.getState());
                 ps.setString(8, object.getZip());
-                ps.setString(9, object.getCountry());
-                ps.setString(10, object.getPhone());
+                ps.setString(9, object.getPhone());
                 return ps;
             }
         };

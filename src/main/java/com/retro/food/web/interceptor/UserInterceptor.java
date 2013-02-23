@@ -25,7 +25,7 @@ public class UserInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        _log.info("entering preHandle for request [{}]", request.getRequestURI());
+        _log.debug("entering preHandle for request [{}]", request.getRequestURI());
         // exclude the set gym page
         if (request.getRequestURI().startsWith("/cafe/switch") || request.getRequestURI().startsWith("/cafe/set")) {
             // setting gym, continue
@@ -62,12 +62,11 @@ public class UserInterceptor implements HandlerInterceptor {
         }
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            modelAndView.addObject("_user", getUserFromPrincipal(principal));
-        }
-        if (request.getSession().getAttribute("currentGymId") != null) {
-            Long cafeId = (Long) request.getSession().getAttribute("currentCafeId");
-            _log.debug("setting current cafe to [{}]",cafeId);
-            modelAndView.addObject("_cafe", getCafeDao().getObjectById(cafeId));
+            User user = getUserFromPrincipal(principal);
+            if(user != null) {
+                modelAndView.addObject("_user",user);
+                modelAndView.addObject("_cafe",getCafeDao().getObjectById(user.getCafeId()));
+            }
         }
         if(request.getMethod().equalsIgnoreCase("GET") 
                         && request.getRequestURI().endsWith("switch") == false
@@ -88,7 +87,7 @@ public class UserInterceptor implements HandlerInterceptor {
      * @return
      */
     public static User getUserFromPrincipal(Object principal) {
-        _log.info("principal is [{}]",principal);
+        _log.debug("principal is [{}]",principal);
         // check for anonymous
         if(principal.equals("anonymousUser")) {
             // anonoymous user
@@ -104,7 +103,7 @@ public class UserInterceptor implements HandlerInterceptor {
             // TODO: sanity check this
             user = (User)principal;
         }
-        _log.info("context holder is [{}]",user);
+        _log.debug("context holder is [{}]",user);
         return user;
     }
     

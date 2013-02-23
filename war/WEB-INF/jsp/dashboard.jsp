@@ -26,7 +26,19 @@
             <tbody>
               <c:forEach var="menu" items="${menus}">
                 <tr>
-                    <td>${menu.name}</td>
+                  <td><a href="/menu/${menu.id}">${menu.name}</a></td>
+                  <td style="width:40px">
+                    <div class="btn-group">
+                      <button class="btn dropdown-toggle btn-mini" data-toggle="dropdown">
+                        <i class="icon-cog icon"></i>
+                      </button>
+                      <ul class="dropdown-menu pull-right">
+                        <li><a href="/menu/${menu.id}/edit"><i class="icon-edit"></i> Edit Menu Items</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/menu/${menu.id}"><i class="icon-trash"></i> Delete Menu</a></li>
+                      </ul>
+                    </div>
+                  </td>
                 </tr>
               </c:forEach>
             </tbody>
@@ -43,7 +55,7 @@
       <c:choose>
         <c:when test="${vendors == null || empty vendors}">
           <div>
-            <p>No vendors. <a href="/vendor/new">Create one</a>!</p>
+            <p>No vendors. <a href="/vendor/new">Create one</a></p>
           </div>
         </c:when>
         <c:otherwise>

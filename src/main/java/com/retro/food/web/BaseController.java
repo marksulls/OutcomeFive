@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,32 +32,9 @@ import com.retro.food.web.interceptor.UserInterceptor;
 public abstract class BaseController extends DaoKeeper {
     final Logger _log = LoggerFactory.getLogger(BaseController.class);
     
-    /**
-     * helper to grab the session
-     * @return
-     */
-    private HttpSession getSession() {
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        return attr.getRequest().getSession();
-    }
-    
-    public void setCurrentCafeId(Long cafeId) {
-        getSession().setAttribute("currentCafeId",cafeId);
-    }
-    
-    // helpers to get current cafe
-    public Long getCurrentCafeId() {
-        Object id = getSession().getAttribute("currentCafeId");
-        if (id != null) {
-            return (Long) id;
-        }
-        return null;
-    }
-
     public Cafe getCurrentCafe() {
-        Long cafeId = getCurrentCafeId();
-        if(cafeId != null) {
-            return getCafeDao().getObjectById(cafeId);
+        if(getCurrentUser() != null) {
+            return getCafeDao().getObjectById(getCurrentUser().getCafeId());
         }
         return null;
     }

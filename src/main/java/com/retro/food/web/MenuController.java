@@ -46,11 +46,12 @@ public class MenuController extends BaseController {
         }
         try {
             // set the cafe id
-            menu.setCafeId(getCurrentCafeId());
+            menu.setCafeId(getCurrentCafe().getId());
             // save it
             getMenuDao().saveOrUpdate(menu);
         } catch (Exception e) {
             _log.error("error savingm menu [{}] - [{}]",menu,e);
+            addErrorMessage("Error creating menu " + menu.getName() + ". Please contact support");
             return "menu/create";
         }
         addSuccessMessage("Successfully created menu " + menu.getName());

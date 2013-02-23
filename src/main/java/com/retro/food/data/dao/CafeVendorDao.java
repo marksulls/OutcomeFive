@@ -11,9 +11,9 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.retro.core.data.dao.BaseDao;
-import com.retro.food.core.CafeUser;
+import com.retro.food.core.CafeVendor;
 
-public class CafeVendorDao extends BaseDao<CafeUser> {
+public class CafeVendorDao extends BaseDao<CafeVendor> {
     // logging
     final Logger _log = LoggerFactory.getLogger(CafeVendorDao.class);
     
@@ -29,22 +29,21 @@ public class CafeVendorDao extends BaseDao<CafeUser> {
      * @return
      */
     @Override
-    public String getObjectCacheKey(CafeUser object) {
-        return new StringBuilder("cafe_user_id_").append(object.getUserId()).append("__").append(object.getCafeId()).toString();
+    public String getObjectCacheKey(CafeVendor object) {
+        return new StringBuilder("cafe_vendor_id_").append(object.getVendorId()).append("_").append(object.getCafeId()).toString();
     }
     
     /**
      * maps the ResultSet to an object
      */
     @Override
-    public RowMapper<CafeUser> getRowMapper() {
-        return new RowMapper<CafeUser>() {
-            public CafeUser mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public RowMapper<CafeVendor> getRowMapper() {
+        return new RowMapper<CafeVendor>() {
+            public CafeVendor mapRow(ResultSet rs, int rowNum) throws SQLException {
                 // map result set to object
-                CafeUser cafe = new CafeUser();
+                CafeVendor cafe = new CafeVendor();
                 cafe.setCafeId(rs.getLong("cafe_id"));
-                cafe.setUserId(rs.getLong("user_id"));
-                cafe.setType(rs.getInt("type"));
+                cafe.setVendorId(rs.getLong("vendor_id"));
                 cafe.setCreated(rs.getTimestamp("created"));
                 cafe.setUpdated(rs.getTimestamp("updated"));
                 // return the object
@@ -54,16 +53,15 @@ public class CafeVendorDao extends BaseDao<CafeUser> {
     }
 
     @Override
-    public PreparedStatementCreator getSavePreparedStatementCreator(final CafeUser object) {
+    public PreparedStatementCreator getSavePreparedStatementCreator(final CafeVendor object) {
         return new PreparedStatementCreator() {
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(
-                    "insert into cafe_user (user_id,cafe_id,type,created,updated) values (?,?,?,now(),now()) "
-                    + "on duplicate key update type = values(type),updated = now()");
-                ps.setLong(1,object.getUserId());
+                    "insert into cafe_vendor (vendor_id,cafe_id,created,updated) values (?,?,now(),now()) "
+                    + "on duplicate key update updated = now()");
+                ps.setLong(1,object.getVendorId());
                 ps.setLong(2,object.getCafeId());
-                ps.setInt(3,object.getType());
                 return ps;
             }
         };

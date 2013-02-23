@@ -42,7 +42,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             _log.error("no user with email [{}]",username);
             throw new UsernameNotFoundException("no user found for username " + username);
         }
-        _log.info("got user [{}] , password [{}]",user.getEmail(),user.getPassword());
+        _log.debug("got user [{}] , password [{}]",user.getEmail(),user.getPassword());
         // build the permissions array
         Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
         // cool, looks for cafe ownerships

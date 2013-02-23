@@ -12,7 +12,7 @@
   <h5>New <small>menu</small></h5>
 </div>
 <div class="section">
-  <form:form method="post" action="/menu/new" modelAttribute="gym">
+  <form:form method="post" action="/menu/new" modelAttribute="menu">
     <fieldset>
       <label>Name:</label>
       <form:input path="name" class="input-large" />

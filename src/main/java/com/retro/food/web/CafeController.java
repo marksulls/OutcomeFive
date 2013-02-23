@@ -8,7 +8,6 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -50,8 +49,6 @@ public class CafeController extends BaseController {
         if(cafe == null) {
             throw new ObjectNotFoundException("no cafe with id [" + cafeId + "]");
         }
-        // set the current cafe
-        this.setCurrentCafeId(cafe.getId());
         // send the user back where they came from
         String referrer = request.getHeader("referrer");
         _log.info("Referrer is [{}]", referrer);

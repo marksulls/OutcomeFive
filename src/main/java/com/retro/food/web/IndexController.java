@@ -14,6 +14,7 @@ import com.retro.core.data.ObjectNotFoundException;
 import com.retro.food.core.Cafe;
 import com.retro.food.core.Menu;
 import com.retro.food.core.User;
+import com.retro.food.core.Vendor;
 
 @Controller
 @RequestMapping("/")
@@ -33,7 +34,9 @@ public class IndexController extends BaseController {
         model.addAttribute("cafe",cafe);
         // look up the menus
         List<Menu> menus = getMenuDao().findMenusForCafes(cafe.getId());
-        model.addAttribute("menu",menus);
+        model.addAttribute("menus",menus);
+        List<Vendor> vendors = getVendorDao().findVendorsForCafe(cafe.getId());
+        model.addAttribute("vendors",vendors);
         return "dashboard";
     }
     
@@ -47,12 +50,10 @@ public class IndexController extends BaseController {
             return "index";
         }
         // get the cafe
-        Cafe cafe = getCurrentCafe();
-        // if null, send to landing
+        Cafe cafe = getCafeDao().getObjectById(user.getCafeId());
+        // this should never happen
         if(cafe == null) {
              cafe = user.getCafesOwned().get(0);
-            // fudge this
-            setCurrentCafeId(cafe.getId());
         }
         // else show the dashboard
         _log.info("viewing cafe [{}]",cafe);

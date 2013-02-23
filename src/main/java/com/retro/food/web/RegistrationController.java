@@ -84,19 +84,20 @@ public class RegistrationController extends BaseController {
         TransactionStatus status = transactionManager.getTransaction(def);
         try {
             // create a new user
+            Cafe cafe = new Cafe();
+            cafe.setName(registration.getCafeName());
+            cafe.setTimeZone("America/Denver");
+            // save it
+            getCafeDao().saveOrUpdate(cafe);
+            // create the cafe
             User user = new User();
+            user.setCafeId(cafe.getId());
             user.setEmail(registration.getEmail());
             user.setName(registration.getName());
             user.setPassword(password);
             user.setActive(true);
             // save it
             getUserDao().saveOrUpdate(user);
-            // create the cafe
-            Cafe cafe = new Cafe();
-            cafe.setName(registration.getCafeName());
-            cafe.setTimeZone("America/Denver");
-            // save it
-            getCafeDao().saveOrUpdate(cafe);
             // now add the cafe user mapping
             CafeUser cafeUser = new CafeUser();
             cafeUser.setCafeId(cafe.getId());

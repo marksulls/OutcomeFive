@@ -229,6 +229,7 @@
   <mvc:interceptors>
     <bean class="com.retro.food.web.interceptor.UserInterceptor" scope="request">
       <property name="userDao" ref="userDao" />
+      <property name="cafeDao" ref="cafeDao" />
     </bean>
     <bean class="com.retro.food.web.interceptor.DevEnvironmentInterceptor" />
   </mvc:interceptors>

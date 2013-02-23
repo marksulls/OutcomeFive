@@ -19,17 +19,15 @@ public class MenuDao extends BaseDao<Menu> {
     // logging
     final Logger _log = LoggerFactory.getLogger(MenuDao.class);
     
-    public List<Menu> findMenusForCafes(long menuId) {
+    public List<Menu> findMenusForCafes(Long cafeId) {
+        _log.debug("finding menus for cafe [{}]",cafeId);
         try {
             // look up the gyms
             return this.jdbcTemplate.query(
-                 "select c.* from menu c " +
-                 "inner join menu_user cu on cu.menu_id = c.menu_id " +
-                 "inner join user u on cu.user_id = u.user_id " +
-                 "where cu.user_id = ? and cu.type > 1",
-                 new Object[] {menuId}, getRowMapper());
+                 "select * from menu where cafe_id=?",
+                 new Object[] {cafeId},getRowMapper());
         } catch (EmptyResultDataAccessException e) {
-            _log.warn("no menus found for user [{}]", menuId);
+            _log.warn("no menus found for user [{}]",cafeId);
         }
         return null;
     }
@@ -44,6 +42,7 @@ public class MenuDao extends BaseDao<Menu> {
                 // map result set to object
                 Menu menu = new Menu();
                 menu.setId(rs.getLong("menu_id"));
+                menu.setCafeId(rs.getLong("cafe_id"));
                 menu.setName(rs.getString("name"));
                 menu.setCreated(rs.getTimestamp("created"));
                 menu.setUpdated(rs.getTimestamp("updated"));
@@ -59,11 +58,12 @@ public class MenuDao extends BaseDao<Menu> {
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(
-                    "insert into menu (menu_id,name,created,updated) values (?,?,now(),now()) "
+                    "insert into menu (menu_id,cafe_id,name,created,updated) values (?,?,?,now(),now()) "
                     + "on duplicate key update name = values(name),updated = now()", 
                     new String[] { "menu_id" });
                 ps.setLong(1,menu.getId());
-                ps.setString(2,menu.getName());
+                ps.setLong(2,menu.getCafeId());
+                ps.setString(3,menu.getName());
                 return ps;
             }
         };

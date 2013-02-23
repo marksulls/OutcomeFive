@@ -49,6 +49,7 @@ public class UserDao extends BaseDao<User> {
                 // map result set to object
                 User user = new User();
                 user.setId(rs.getLong("user_id"));
+                user.setCafeId(rs.getLong("cafe_id"));
                 user.setName(rs.getString("name"));
                 user.setEmail(rs.getString("email"));
                 user.setPassword(rs.getString("password"));
@@ -66,7 +67,7 @@ public class UserDao extends BaseDao<User> {
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(
-                    "insert into user (user_id,name,email,password,created,updated) values (?,?,?,?,now(),now()) " +
+                    "insert into user (user_id,cafe_id,name,email,password,created,updated) values (?,?,?,?,?,now(),now()) " +
                     "on duplicate key update " +
                     "name = values(name)," +
                     "password = values(password)," +
@@ -74,9 +75,10 @@ public class UserDao extends BaseDao<User> {
                     "updated = now()", 
                     new String[] { "user_id" });
                 ps.setLong(1,user.getId());
-                ps.setString(2,user.getName());
-                ps.setString(3,user.getEmail());
-                ps.setString(4,user.getPassword());
+                ps.setLong(2,user.getCafeId());
+                ps.setString(3,user.getName());
+                ps.setString(4,user.getEmail());
+                ps.setString(5,user.getPassword());
                 return ps;
             }
         };

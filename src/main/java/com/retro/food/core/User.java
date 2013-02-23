@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -29,8 +28,7 @@ import com.retro.core.data.Entity;
 public class User extends Entity implements UserDetails, CredentialsContainer {
     // serializable
     private static final long serialVersionUID = -7482239690658540974L;
-    @NotNull @Min(value=1L)
-    private long cafeId;
+    private Long cafeId;
     @NotNull
     private String name;
     @NotNull
@@ -179,11 +177,11 @@ public class User extends Entity implements UserDetails, CredentialsContainer {
         return password;
     }
 
-    public long getCafeId() {
+    public Long getCafeId() {
         return cafeId;
     }
 
-    public void setCafeId(long cafeId) {
+    public void setCafeId(Long cafeId) {
         this.cafeId = cafeId;
     }
 
