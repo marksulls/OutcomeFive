@@ -175,8 +175,9 @@ public abstract class BaseDao<T extends Entity> {
      * Deletes the object from the database and clears the cache.
      * 
      * @param object
+     * @throws Exception 
      */
-    public int deleteObject(T object) {
+    public int deleteObject(T object) throws Exception {
         _log.info("deleting object id [{}]",object);
         try {
             // clear the cache
