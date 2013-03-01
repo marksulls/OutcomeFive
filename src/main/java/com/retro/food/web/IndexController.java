@@ -17,7 +17,6 @@ import com.retro.food.core.User;
 import com.retro.food.core.Vendor;
 
 @Controller
-@RequestMapping("/")
 public class IndexController extends BaseController {
     // logging
     final Logger _log = LoggerFactory.getLogger(IndexController.class);
@@ -40,13 +39,13 @@ public class IndexController extends BaseController {
         return "dashboard";
     }
     
-    @RequestMapping({"","/","/index"})
+    @RequestMapping(value={"","/"})
     public String index(Model model,SecurityContextHolderAwareRequestWrapper wrapper) {
         // check for a user
         User user = getCurrentUser();
         // if null, send to landing
         if(user == null) {
-            _log.info("current user is null",user);
+            _log.debug("current user is null",user);
             return "index";
         }
         // get the cafe
@@ -56,7 +55,7 @@ public class IndexController extends BaseController {
              cafe = user.getCafesOwned().get(0);
         }
         // else show the dashboard
-        _log.info("viewing cafe [{}]",cafe);
+        _log.debug("viewing cafe [{}]",cafe);
         return index(cafe.getId(),model,wrapper);
     }
 }

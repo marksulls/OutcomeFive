@@ -52,13 +52,10 @@ public class VendorDao extends BaseDao<Vendor> {
                 Vendor vendor = new Vendor();
                 vendor.setId(rs.getLong("vendor_id"));
                 vendor.setName(rs.getString("name"));
-                vendor.setStreet1(rs.getString("street1"));
-                vendor.setStreet2(rs.getString("street2"));
-                vendor.setStreet3(rs.getString("street3"));
+                vendor.setAddress(rs.getString("address"));
                 vendor.setCity(rs.getString("city"));
                 vendor.setState(rs.getString("state"));
                 vendor.setZip(rs.getString("zip"));
-                vendor.setCountry(rs.getString("country"));
                 vendor.setPhone(rs.getString("phone"));
                 vendor.setCreated(rs.getTimestamp("created"));
                 vendor.setUpdated(rs.getTimestamp("updated"));
@@ -74,12 +71,10 @@ public class VendorDao extends BaseDao<Vendor> {
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(
-                    "insert into vendor (vendor_id,name,street1,street2,street3,city,state,zip,phone,created,updated) values (?,?,?,?,?,?,?,?,?,now(),now()) " +
+                    "insert into vendor (vendor_id,name,address,city,state,zip,phone,created,updated) values (?,?,?,?,?,?,?,now(),now()) " +
                     "on duplicate key update " +
                     "name = values(name)," +
-                    "street1 = values(street1), " +
-                    "street2 = values(street2), " +
-                    "street3 = values(street3), " +
+                    "address = values(address), " +
                     "city = values(city), " +
                     "state = values(state), " +
                     "zip = values(zip), " +
@@ -88,13 +83,11 @@ public class VendorDao extends BaseDao<Vendor> {
                     new String[] { "vendor_id" });
                 ps.setLong(1,object.getId());
                 ps.setString(2,object.getName());
-                ps.setString(3, object.getStreet1());
-                ps.setString(4, object.getStreet2());
-                ps.setString(5, object.getStreet3());
-                ps.setString(6, object.getCity());
-                ps.setString(7, object.getState());
-                ps.setString(8, object.getZip());
-                ps.setString(9, object.getPhone());
+                ps.setString(3,object.getAddress());
+                ps.setString(4,object.getCity());
+                ps.setString(5,object.getState());
+                ps.setString(6,object.getZip());
+                ps.setString(7,object.getPhone());
                 return ps;
             }
         };

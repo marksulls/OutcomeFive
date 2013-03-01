@@ -9,7 +9,7 @@
 <%-- figure out a description --%>
 <%@ include file="/WEB-INF/jsp/header.jspf" %>
 <div class="page-header">
-  <h5>New <small>menu</small></h5>
+  <h5>New Menu <small>@ ${_cafe.name}</small></h5>
 </div>
 <div class="section">
   <form:form method="post" action="/menu/new" modelAttribute="menu">

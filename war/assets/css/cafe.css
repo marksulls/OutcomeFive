@@ -62,7 +62,8 @@ body {
 label.valid {
   width: 24px;
   height: 24px;
-  background: url(http://alittlecode.com/files/jQuery-Validate-Demo/assets/img/valid.png) center center no-repeat;
+  color:green;
+  /* background: url(http://alittlecode.com/files/jQuery-Validate-Demo/assets/img/valid.png) center center no-repeat; */
   display: inline-block;
   text-indent: -9999px;
 }
@@ -71,4 +72,13 @@ label.error {
   color: red;
   padding: 2px 8px;
   margin-top: 2px;
+}
+
+.right-border {
+  border-right: 1px solid #ccc;
+}
+
+.left-border {
+  border-left: 1px solid #ccc;
+  margin-left: -1px;
 }

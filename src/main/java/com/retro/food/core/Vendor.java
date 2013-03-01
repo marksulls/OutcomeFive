@@ -16,9 +16,7 @@ public class Vendor extends Entity {
     private static final long serialVersionUID = -4871084067736798667L;
     @NotNull @NotBlank
     private String name;
-    private String street1;
-    private String street2;
-    private String street3;
+    private String address;
     private String city;
     private String state;
     private String zip;
@@ -31,23 +29,11 @@ public class Vendor extends Entity {
     public void setName(String name) {
         this.name = name;
     }
-    public String getStreet1() {
-        return street1;
+    public String getAddress() {
+        return address;
     }
-    public void setStreet1(String street1) {
-        this.street1 = street1;
-    }
-    public String getStreet2() {
-        return street2;
-    }
-    public void setStreet2(String street2) {
-        this.street2 = street2;
-    }
-    public String getStreet3() {
-        return street3;
-    }
-    public void setStreet3(String street3) {
-        this.street3 = street3;
+    public void setAddress(String address) {
+        this.address = address;
     }
     public String getCity() {
         return city;

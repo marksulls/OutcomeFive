@@ -88,7 +88,7 @@ public class RegistrationController extends BaseController {
             cafe.setName(registration.getCafeName());
             cafe.setTimeZone("America/Denver");
             // save it
-            getCafeDao().saveOrUpdate(cafe);
+            getCafeDao().saveOrUpdate(cafe,false);
             // create the cafe
             User user = new User();
             user.setCafeId(cafe.getId());
@@ -97,14 +97,14 @@ public class RegistrationController extends BaseController {
             user.setPassword(password);
             user.setActive(true);
             // save it
-            getUserDao().saveOrUpdate(user);
+            getUserDao().saveOrUpdate(user,false);
             // now add the cafe user mapping
             CafeUser cafeUser = new CafeUser();
             cafeUser.setCafeId(cafe.getId());
             cafeUser.setUserId(user.getId());
             cafeUser.setType(3);
             // save it
-            getCafeUserDao().saveOrUpdate(cafeUser);
+            getCafeUserDao().saveOrUpdate(cafeUser,false);
             // commit the transaction
             transactionManager.commit(status);
             // add the basic perms

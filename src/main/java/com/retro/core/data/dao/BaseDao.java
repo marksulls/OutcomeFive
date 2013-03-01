@@ -205,6 +205,7 @@ public abstract class BaseDao<T extends Entity> {
         } catch (Exception e) {
             _log.error("error deleting object [{}] - [{}]",object,e);
             getTransactionManager().rollback(status);
+            throw e;
         }
         return result;
     }
@@ -352,7 +353,8 @@ public abstract class BaseDao<T extends Entity> {
                 getTransactionManager().commit(status);
             }
         } catch (Exception e) {
-            _log.error("error in transaction [{}]",e);
+            e.printStackTrace();
+            _log.error("error in transaction [{}]",e.getMessage());
             if(useTx) {
                 getTransactionManager().rollback(status);
             }

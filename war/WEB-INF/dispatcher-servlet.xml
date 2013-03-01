@@ -14,7 +14,7 @@
 
   <!-- ***** data access ***** -->
   <!-- the first two entries are for local tomcat, unit tests, and then production -->
-  <context:property-placeholder location="war/WEB-INF/default.properties,WEB-INF/default.properties,file:/etc/fooddude/fooddude.conf" ignore-resource-not-found="true" />
+  <context:property-placeholder location="WEB-INF/default.properties,file:war/WEB-INF/default.properties,file:/etc/fooddude/fooddude.conf" ignore-resource-not-found="true" />
   
   <!-- datasource -->
   <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">
@@ -121,6 +121,12 @@
     <property name="transactionManager" ref="transactionManager" />
     <property name="cache" ref="cacheFactory" />
   </bean>
+  <bean id="vendorItemDao" class="com.retro.food.data.dao.VendorItemDao" lazy-init="true">
+    <property name="tableName" value="vendor_item" />
+    <property name="dataSource" ref="dataSource" />
+    <property name="transactionManager" ref="transactionManager" />
+    <property name="cache" ref="cacheFactory" />
+  </bean>
   
   <bean id="allDaoConfigBean" abstract="true">
     <property name="cafeDao" ref="cafeDao" />
@@ -130,6 +136,7 @@
     <property name="menuItemDao" ref="menuItemDao" />
     <property name="userDao" ref="userDao" />
     <property name="vendorDao" ref="vendorDao" />
+    <property name="vendorItemDao" ref="vendorItemDao" />
   </bean>
   
   <!--  this is a workaround for some configuration difficulties -->

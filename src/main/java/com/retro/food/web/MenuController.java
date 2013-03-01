@@ -55,6 +55,6 @@ public class MenuController extends BaseController {
             return "menu/create";
         }
         addSuccessMessage("Successfully created menu " + menu.getName());
-        return "/";
+        return "redirect:/";
     }
 }

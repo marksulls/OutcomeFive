@@ -4,13 +4,12 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<c:set var="title_title" value="Gym" />
-<c:set var="page_title" value="Gym" />
+<c:set var="title_title" value="Cafe" />
+<c:set var="page_title" value="Cafe" />
 <%-- figure out a description --%>
-<%@ include file="/WEB-INF/jsp/headerCool.jspf" %>
+<%@ include file="/WEB-INF/jsp/header.jspf" %>
 <div class="page-header">
-  <%@ include file="/WEB-INF/jsp/common/owner_quick_menu.jspf" %>
-  <h5>Create <small>gym</small></h5>
+  <h5>Create <small>Cafe</small></h5>
 </div>
 <div class="section">
   <form:form method="post" action="/gym/save" modelAttribute="gym">
@@ -28,4 +27,4 @@
     </fieldset>
   </form:form>
 </div>
-<%@ include file="/WEB-INF/jsp/footerCool.jspf" %>
+<%@ include file="/WEB-INF/jsp/footer.jspf" %>

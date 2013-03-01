@@ -127,18 +127,13 @@
     </dependency>
     <dependency>
     	<groupId>org.springframework</groupId>
-    	<artifactId>spring-asm</artifactId>
-    	<version>${SPRING_VERSION}</version>
-    </dependency>
-    <dependency>
-    	<groupId>org.springframework</groupId>
     	<artifactId>spring-expression</artifactId>
     	<version>${SPRING_VERSION}</version>
     </dependency>
     <dependency>
     	<groupId>org.springframework.security</groupId>
     	<artifactId>spring-security-crypto</artifactId>
-    	<version>${SPRING_VERSION}</version>
+    	<version>3.1.3.RELEASE</version>
     </dependency>
     <dependency>
     	<groupId>javax.validation</groupId>
@@ -163,12 +158,12 @@
     <dependency>
     	<groupId>org.springframework.security</groupId>
     	<artifactId>spring-security-core</artifactId>
-    	<version>${SPRING_VERSION}</version>
+    	<version>3.1.3.RELEASE</version>
     </dependency>
     <dependency>
     	<groupId>org.springframework.security</groupId>
     	<artifactId>spring-security-config</artifactId>
-    	<version>${SPRING_VERSION}</version>
+    	<version>3.1.3.RELEASE</version>
     </dependency>
     <dependency>
     	<groupId>org.springframework</groupId>
@@ -176,34 +171,24 @@
     	<version>${SPRING_VERSION}</version>
     </dependency>
     <dependency>
-    	<groupId>org.springframework.security</groupId>
-    	<artifactId>spring-security-web</artifactId>
+    	<groupId>org.springframework</groupId>
+    	<artifactId>spring-test</artifactId>
     	<version>${SPRING_VERSION}</version>
     </dependency>
     <dependency>
     	<groupId>org.springframework.security</groupId>
+    	<artifactId>spring-security-web</artifactId>
+    	<version>3.1.3.RELEASE</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.springframework.security</groupId>
     	<artifactId>spring-security-taglibs</artifactId>
-    	<version>${SPRING_VERSION}</version>
+    	<version>3.1.3.RELEASE</version>
     </dependency>
     <dependency>
     	<groupId>aopalliance</groupId>
     	<artifactId>aopalliance</artifactId>
     	<version>1.0</version>
-    </dependency>
-    <dependency>
-    	<groupId>cglib</groupId>
-    	<artifactId>cglib</artifactId>
-    	<version>2.2.2</version>
-    </dependency>
-    <dependency>
-    	<groupId>asm</groupId>
-    	<artifactId>asm</artifactId>
-    	<version>3.3.1</version>
-    </dependency>
-    <dependency>
-    	<groupId>org.jsoup</groupId>
-    	<artifactId>jsoup</artifactId>
-    	<version>1.6.1</version>
     </dependency>
     <dependency>
         <groupId>commons-io</groupId>
@@ -239,17 +224,6 @@
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
       <version>2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.antlr</groupId>
-      <artifactId>antlr-runtime</artifactId>
-      <version>3.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.antlr</groupId>
-      <artifactId>antlr3-maven-plugin</artifactId>
-      <version>3.4</version>
-      <type>maven-plugin</type>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -302,6 +276,11 @@
     	<artifactId>spring-social-facebook</artifactId>
     	<version>1.0.2.RELEASE</version>
 	</dependency>
+    <dependency>
+      <groupId>org.jscience</groupId>
+      <artifactId>jscience</artifactId>
+      <version>4.3.1</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -339,7 +318,7 @@
     </resources>
   </build>
   <properties>
-    <SPRING_VERSION>3.1.3.RELEASE</SPRING_VERSION>
+    <SPRING_VERSION>3.2.1.RELEASE</SPRING_VERSION>
   </properties>
   <!-- <scm>
     <url>https://github.com/marksulls/GiantMoon</url>

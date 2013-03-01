@@ -13,6 +13,7 @@ public class DaoKeeper {
     private MenuItemDao menuItemDao;
     private UserDao userDao;
     private VendorDao vendorDao;
+    private VendorItemDao vendorItemDao;
     
     public CafeDao getCafeDao() {
         return cafeDao;
@@ -55,5 +56,11 @@ public class DaoKeeper {
     }
     public void setVendorDao(VendorDao vendorDao) {
         this.vendorDao = vendorDao;
+    }
+    public VendorItemDao getVendorItemDao() {
+        return vendorItemDao;
+    }
+    public void setVendorItemDao(VendorItemDao vendorItemDao) {
+        this.vendorItemDao = vendorItemDao;
     }
 }

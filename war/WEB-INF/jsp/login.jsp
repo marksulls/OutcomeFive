@@ -17,7 +17,7 @@
     </label>
     <br />
     <div>
-      <p>Haven't registered? <a href="/register">Sign up here</a></p>
+      <p>Haven't registered? <a href="/register">Sign Up!</a></p>
     </div>
   </form>
 <%@ include file="/WEB-INF/jsp/footer.jspf" %>
